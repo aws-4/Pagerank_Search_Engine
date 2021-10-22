@@ -79,7 +79,7 @@ void Stringset::insert(string key, int val)
       {
         table[i] = NULL;
       }
-      for (int i = 0; i < size/2; i++)  //SIZE/2 FIXED IT
+      for (int i = 0; i < size/2; i++)
       {
         Node *n = old_table[i];
         while (n != NULL)
@@ -95,8 +95,7 @@ void Stringset::insert(string key, int val)
     }
 
 	int h = myhash(key, size);
-	table[h] = new Node(key, h, table[h]); //h should be val
-  //cout << table[h]->pageID << endl;
+	table[h] = new Node(key, h, table[h]);
 }
 
 void Stringset::insertLink(string key, string key2)
@@ -116,20 +115,15 @@ void Stringset::insertLink(string key, string key2)
     curr->myLink = new Link(key, curr->myLink);
     curr->myLink->ID = myhash(key, size);
     curr->numLinks = 1;
-    //cout << curr->numLinks << endl;
     return;
   }
   else
   {
     Link *tempLink = curr->myLink;
-    /*while (tempLink->next != NULL)
-    {
-      tempLink = tempLink->next;
-    }*/
+
     curr->myLink = new Link(key, tempLink);
     curr->myLink->ID = myhash(key, size);
     curr->numLinks++;
-    //cout << table[h]->numLinks << endl;
     return;
   }
 }
@@ -146,19 +140,13 @@ void Stringset::insertWord(string key, string key2)
   }
   if (curr->myWord == NULL)
   {
-    curr->myWord = new Word(key, curr->myWord, h);//curr->pageID);
-    //cout << curr->myWord->page->key << endl;
+    curr->myWord = new Word(key, curr->myWord, h);
     curr->numWords = 1;
     return;
   }
   else
   {
     Word *tempWord = curr->myWord;
-    /*while (tempWord->next != NULL)
-    {
-      tempWord = tempWord->next;
-    }
-    tempWord->next = new Word(key, NULL, h);*/
     curr->myWord = new Word(key, tempWord, h);
     curr->numWords++;
     return;
@@ -180,11 +168,10 @@ void Stringset::insertWordToIndex(string key, int wordnum, int pagerankID)
     }
     indexWord = indexWord->next;
   }
-  //assert(false);
+
   //If we've gotten this far, the word did not already exist so we add it to the linked list of words.
   if (indexWord == NULL)
   {
-    //cout << "indexWord == NULL" << endl;
     Index[h] = new Word(key, Index[h], pagerankID);
   }
 }
@@ -237,12 +224,9 @@ void Stringset::remove(string key)
 
 void Stringset::print(void)
 {
-  // TBD: Print contents of table
 	Node *curr = new Node;
   Link *tempLink;
   int temporarycounter = 0;
-
-	//int loopKey = 1;
 
 	for (int i = 0; i < size; i++)
 	{
@@ -253,9 +237,7 @@ void Stringset::print(void)
       while (tempLink != NULL)
       {
         cout << tempLink->ID << endl;
-        //tempLink = tempLink->next;
       }
-			//cout << curr->key << endl;
 
       curr = curr->next;
       temporarycounter++;
@@ -263,10 +245,6 @@ void Stringset::print(void)
 	}
   cout << temporarycounter << endl;
 }
-
-//Issue here to be worked on: Have to start traversing nodes differently, maybe by ID number,
-//since we're using hash tables and sometimes multiple nodes exist in a single array index.
-//Their one unique defining factor will be their pageID.
 
 void Stringset::rankPages(int counter)
 {
@@ -281,19 +259,14 @@ void Stringset::rankPages(int counter)
       curr->weight = (double) 1/counter;
       sum += curr->weight;
       curr = curr->next;
-      //cout << curr->weight;
     }
   }
-  //cout << "does it go this far?" <<endl;
-  //FOR TESTING PURPOSES
-  //cout << sum << endl;
+
   int numLinks;
-  //sum = 0;
 
   for (int k = 0; k < 50; k++)
   {
     sum = 0;
-    //First for loop
     for (int i = 0; i < size; i++)
     {
       curr = table[i];
@@ -304,16 +277,11 @@ void Stringset::rankPages(int counter)
         curr = curr->next;
       }
     }
-    //Sum after this loop is 0.1, makes sense.
-    //cout << sum << endl;
+    
     sum = 0;
-    //Second for loop
     Link *currLink;
     Node *curr2;
-    //curr is the NEWPAGE
-    //currLink is an outgoing link on NEWPAGE
-    //curr2 is the hash lookup for a NEWPAGE corresponding to that outgoing link
-    //The logic seems solid, so why isn't it working?
+    
     for (int i = 0; i < size; i++)
     {
       curr = table[i];
@@ -332,15 +300,12 @@ void Stringset::rankPages(int counter)
           {
             /*Iterating through the nodes stored in table[h] to see if the key of the
             one of these nodes matches the key of the outgoing link.  If so, we take
-            set that node's new_weight = 0.9 * table[i]->weight / t as described in the
-            instructions.*/
+            set that node's new_weight = 0.9 * table[i]->weight / t*/
             if (currLink->key == curr2->key)
             {
               curr2->new_weight += (double) (0.9 * curr->weight / curr->numLinks);
-              sum += (double) (0.9 * curr->weight / curr->numLinks);//curr2->new_weight;
-//              cout << curr->numLinks << endl;
+              sum += (double) (0.9 * curr->weight / curr->numLinks);
               }
-            //cout << curr2->numLinks << endl;
             curr2 = curr2->next;
           }
           currLink = currLink->next;
@@ -349,10 +314,8 @@ void Stringset::rankPages(int counter)
         curr = curr->next;
       }
     }
-    //Sum after this loop is very odd, so it seems like the problem must be with the Links or Link Insertion.
-    //cout << sum << endl;
+
     sum = 0;
-    //Third for loop
     for (int i = 0; i < size; i++)
     {
       curr = table[i];
@@ -363,10 +326,7 @@ void Stringset::rankPages(int counter)
         curr = curr->next;
       }
     }
-    //The sum after this for loop is a culmination of sums from the previous two (?)
-    //cout << sum << endl;
   }
-  //cout << sum << endl;
 }
 
 void Stringset::allocateInvertedIndex(int wordCount)
@@ -383,7 +343,6 @@ void Stringset::search(string term, int URLcounter)
 {
   int pageRank;
   int h = myhash(term, indexSize);
-  //cout << h;
   Word *curr = Index[h];
   while (curr != NULL)
   {
@@ -393,7 +352,7 @@ void Stringset::search(string term, int URLcounter)
       while (tempID != NULL)
       {
         Node *tempTable = table[tempID->key];
-        while (tempTable != NULL)       //work between these lines
+        while (tempTable != NULL)
         {
           Word *tempWord = tempTable->myWord;
           while (tempWord != NULL)
@@ -407,7 +366,7 @@ void Stringset::search(string term, int URLcounter)
             tempWord = tempWord->next;
           }
           tempTable = tempTable->next;
-        }                              //work between these lines
+        }
         tempID = tempID->next;
       }
     }

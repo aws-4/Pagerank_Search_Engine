@@ -40,8 +40,6 @@ void searchengine(void)
 
   S.allocateInvertedIndex(wordCounter);
 
-  //cout << wordCounter << endl;
-
   //In the below block, we're not removing bad links; we've refrained from
   //inserting links and instead have inserted NEWPAGEs and words in the first
   //While loop, so now we only insert the links (which we identiy via their
@@ -62,7 +60,7 @@ void searchengine(void)
     }
     else if (word[0] == 'h' && word [1] == 't' && word[2] == 't' && word[3] == 'p')
     {
-      //this is supposed to ignore Links that are not NEWPAGEs.
+      //ignore Links that are not NEWPAGEs.
       if (S.find(word))
       {
         S.insertLink(word, mainURL);
@@ -70,14 +68,11 @@ void searchengine(void)
     }
     else
     {
-      //cout << currentPageID << endl;
       S.insertWordToIndex(word, wordCounter, currentPageID);
     }
   }
 
   inputFile.close();
-
-  //S.print();
 
   S.rankPages(URLcounter);
 
